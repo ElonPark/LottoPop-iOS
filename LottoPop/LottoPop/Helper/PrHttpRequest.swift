@@ -17,34 +17,30 @@ class PrHttpRequest {
     // MARK: GET
     func getNLottoNumber(drwNo: Int, success: ((NLottoWinResult?) -> Void)?, failure: ((String?) -> Void)?) {
         let urlStr = PrHttpRequest.API_URL + "?method=getLottoNumber&drwNo=" + (0 < drwNo ? String(drwNo) : "")
-        if let url = try? urlStr.asURL() {
-            Alamofire.request(url).responseJSON { (alamoResponse) in
-                let result = alamoResponse.result
-                if true == result.isSuccess {
-                    let responseData = Mapper<NLottoWinResult>().map(JSONObject: result.value)
+        Alamofire.request(urlStr)
+            .responseJSON { (alamoResponse) in
+                switch alamoResponse.result {
+                case .success(let resultJson):
+                    let responseData = Mapper<NLottoWinResult>().map(JSONObject: resultJson)
                     success?(responseData)
-                } else {
-                    let errMsg = result.error?.localizedDescription
-                    failure?(errMsg)
+                case .failure(let error):
+                    failure?(error.localizedDescription)
                 }
-            }
         }
     }
     
     func getPLottoNumber(round: Int, success: ((Array<PLottoWinResult>?) -> Void)?, failure: ((String?) -> Void)?) {
         let urlStr = PrHttpRequest.API_URL + "?method=get520Number&drwNo=" + (0 < round ? String(round) : "")
-        if let url = try? urlStr.asURL() {
-            Alamofire.request(url).responseJSON { (alamoResponse) in
-                let result = alamoResponse.result
-                if true == result.isSuccess {
-                    let rows = (result.value as? Dictionary<String, Any>)?["rows"]
+        Alamofire.request(urlStr)
+            .responseJSON { (alamoResponse) in
+                switch alamoResponse.result {
+                case .success(let resultJson):
+                    let rows = (resultJson as? [String: Any])?["rows"]
                     let responseData = Mapper<PLottoWinResult>().mapArray(JSONObject: rows)
                     success?(responseData)
-                } else {
-                    let errMsg = result.error?.localizedDescription
-                    failure?(errMsg)
+                case .failure(let error):
+                    failure?(error.localizedDescription)
                 }
-            }
         }
     }
 }

@@ -1,6 +1,8 @@
 platform :ios, '10.0'
 use_frameworks!
 
+project './LottoPop.xcodeproj'
+
 def common_pods
   pod 'Alamofire', '4.5.1' # https://github.com/Alamofire/Alamofire
   pod 'ObjectMapper', '3.0.0' # https://github.com/Hearst-DD/ObjectMapper
